@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block main %}
+<form action="/register" method="post">
+    <div class="form-group">
+        <input id="user_input" autocomplete="off" autofocus class="form-control" name="username" placeholder="Username"
+            type="text" onkeyup="check_username();">
+        <p id="username_status"></p>
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="password" id = 'password_input' placeholder="Password" type="password" onkeyup="check_password();">
+        <p id="password_status"></p>
+    </div>
+
+    <div class="form-group">
+        <input class="form-control" name="confirmation" placeholder="Password again" type="password">
+    </div>
+    <button class="btn btn-primary" type="submit" id = 'submit' disabled>Register</button>
+</form>
+
+<script>
+    function check_username() {
+        var username = document.getElementById("user_input").value;
+        var label = document.getElementById("username_status");
+        $.get("/check?username=" + username, function (data) {
+            if (data == true) {
+                label.innerHTML = "Username available";
+            } else {
+                label.innerHTML = "Username taken";
+                event.preventDefault();
+            }
+        })
+    }
+    function check_password() {
+      var password = document.getElementById("password_input").value;
+      var label1 = document.getElementById("password_status");
+      if (password.length <= 5) {
+        label1.style.color = 'red';
+        label1.innerHTML = 'Minimum no. of characters should be 6';
+        document.querySelector('#submit').disabled = true;
+        event.preventDefault();
+      } else {
+        label1.style.color = 'green';
+        label1.innerHTML = 'Valid Password';
+        document.querySelector('#submit').disabled = false;
+      }
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Quoted
+{% endblock %}
+
+{% block main %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Company</th>
+            <th scope="col">Price</th>
+            <th scope="col">Symbol</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ stock.name }}</td>
+            <td>{{ stock.price | usd  }}</td>
+            <td>{{ stock.symbol }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<center>
+  <!-- bar chart canvas element -->
+  <h3> {{stock.name}} Price </h3>
+<div class="chartContainer">
+<canvas id="myChart" width="600px" height="400px" ></canvas>
+</div>
+</center>
+<script>
+    // Global parameters:
+    // do not resize the chart canvas when its container does (keep at 600x400px)
+    Chart.defaults.global.responsive = false;
+
+    // define the chart data
+    var chartData = {
+      labels : [{% for item in date_ %}
+                 "{{item}}",
+                {% endfor %}],
+      datasets : [{
+          label: '{{ legend }}',
+          fill: true,
+          lineTension: 0.1,
+          backgroundColor: "rgba(75,192,192,0.4)",
+          borderColor: "rgba(75,192,192,1)",
+          borderCapStyle: 'butt',
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: 'miter',
+          pointBorderColor: "rgba(75,192,192,1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "rgba(75,192,192,1)",
+          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data : [{% for item in price %}
+                    {{item}},
+                  {% endfor %}],
+          spanGaps: false,
+          options: {
+        layout: {
+            padding: {
+                left: 50,
+                right: 0,
+                top: 0,
+                bottom: 0
+            }
+        }
+    }
+      }]
+    }
+
+    // get chart canvas
+    var ctx = document.getElementById("myChart").getContext("2d");
+
+    // create the chart using the chart canvas
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: chartData,
+    });
+</script>
+
+{% endblock %}
